@@ -3,7 +3,9 @@ import os
 
 def run_cli_command(command):
     """Helper to run CLI command and capture output"""
-    return subprocess.run(command, capture_output=True, text=True)
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.path.abspath(os.path.join(os.path.dirname(__file__), "../lib"))
+    return subprocess.run(command, capture_output=True, text=True, env=env)
 
 def test_add_task():
     result = run_cli_command(["python", "-m", "lib.cli_tool", "add-task", "Alice", "Submit report"])
@@ -27,5 +29,5 @@ task.complete()
 """
     script_path.write_text(script_content)
 
-    result = subprocess.run(["python", str(script_path)], capture_output=True, text=True)
+    result = subprocess.run(["python", str(script_path)], capture_output=True, text=True, env=os.environ.copy())
     assert "✅ Task 'Finish lab' completed." in result.stdout
